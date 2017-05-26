@@ -45,8 +45,10 @@ export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 # ############################################################################
 # ==> set debugging on and create debugging log files debug.log and error.log
 INTERACTIVE_MODE="on"
-scriptDebugToStdout=0
+scriptDebugToStdout=1
 scriptDebugToFile=1
+msgLogFile="rdiffbackupMsg.log"
+
 if [[ $scriptDebugToFile == 1 ]]; then
   if [[ -e debug.log ]]; then
     >debug.log
@@ -59,6 +61,7 @@ if [[ $scriptDebugToFile == 1 ]]; then
     touch error.log
   fi
 fi
+cat /dev/null > $msgLogFile
 
 # ############################################################################
 # log4bash
@@ -108,6 +111,11 @@ log_error()     { log "$1" "ERROR" "${LOG_ERROR_COLOR}"; }
 log_warning()   { log "$1" "WARNING" "${LOG_WARN_COLOR}"; }
 log_debug()     { log "$1" "DEBUG" "${LOG_DEBUG_COLOR}"; }
 # ############################################################################
+logMsg()
+{
+  DateTime="%Y/%m/%d %H:%M:%S"
+  echo -e "$DateTime: $1" >> "$msgLogFile"
+}
 
 # ############################################################################
 #--------------------------------------------------------------------------------------------------
@@ -126,22 +134,30 @@ die() { echo "$*" >&2; exit 1; }
 # Backup Function
 backupfunc () {
   printf "\nStart of rdiff-backup"
+  printf "\nStart of rdiff-backup" | logMsg "$@"
   printf "\nNumber of sourcedirs = %s\n" "$noOfDirs"
+  printf "\nNumber of sourcedirs = %s\n" "$noOfDirs" | logMsg "$@"
 
   if [ "$(/bin/mount | /bin/grep -c "$mountpoint")" = '1' ]
   then
   	for (( i = 0; i < "$noOfDirs"; i++ )); do
   	  printf "\n"
+  	  printf "\n" | logMsg "$@"
   		printf "##################### %s #####################################################\n" "${sourcedir[i]}"
+      printf "##################### %s #####################################################\n" "${sourcedir[i]}"  | logMsg "$@"
       log_debug "dest = ${destdir[i]}"
 
   		printf "Backup Directory Mounted, busy doing a backup of %s to %s\n" "${sourcedir[i]}" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
-           /usr/bin/rdiff-backup -v3 --exclude=**/*tmp*/ --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/lost+found*/ --exclude=**/*Trash*/ --exclude=**/*trash*/ --exclude=**/.gvfs/ "${sourcedir[i]}" "${destdir[i]}" 2>&1 | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+  		printf "Backup Directory Mounted, busy doing a backup of %s to %s\n" "${sourcedir[i]}" "${destdir[i]}" | logMsg "$@"
+           /usr/bin/rdiff-backup -v5 --print-statistics --exclude=**/*tmp*/ --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/lost+found*/ --exclude=**/*Trash*/ --exclude=**/*trash*/ --exclude=**/.gvfs/ "${sourcedir[i]}" "${destdir[i]}" 2>&1 | logMsg "$@"
       printf "Backup of %s to %s completed.\n" "${sourcedir[i]}" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+      printf "Backup of %s to %s completed.\n" "${sourcedir[i]}" "${destdir[i]}" | logMsg "$@"
   		printf "#############################################################################\n"
+  		printf "#############################################################################\n" | logMsg "$@"
   	done
   else
-     printf "Backup filesystem $mountpoint not mounted !!! Cowardly refusing your backup !\n" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+     printf "Backup filesystem %s not mounted !!! Cowardly refusing your backup !\n" "$mountpoint" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+     printf "Backup filesystem %s not mounted !!! Cowardly refusing your backup !\n" "$mountpoint" | logMsg "$@"
      exit 1
   fi
   return 0
@@ -151,21 +167,27 @@ backupfunc () {
 # Clean Backups function
 backupclean () {
   printf "\nStart of Clean Backups"
+  printf "\nStart of Clean Backups" | logMsg "$@"
   printf "\nNumber of backup dirs = %s\n" "$noOfDirs"
+  printf "\nNumber of backup dirs = %s\n" "$noOfDirs"  | logMsg "$@"
 
-  log_debug "cleantime = $1"
+  log_debug "Cleamtime = $1"
   if [[ "$(/bin/mount | /bin/grep -c "$mountpoint")" = '1' ]]
   then
   	for (( i = 0; i < "$noOfDirs"; i++ )); do
   		printf "\n"
+  		printf "\n" | logMsg "$@"
   		printf "##################### %s #####################################################\n" "${sourcedir[i]}"
+  		printf "##################### %s #####################################################\n" "${sourcedir[i]}" | logMsg "$@"
 
   		printf "Backup Directory Mounted, start removing backups older than %s at %s" "$1" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
-       /usr/bin/rdiff-backup --force --remove-older-than "$1" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+  		printf "Backup Directory Mounted, start removing backups older than %s at %s" "$1" "${destdir[i]}" | logMsg "$@"
+       /usr/bin/rdiff-backup --force --remove-older-than "$1" "${destdir[i]}" 2>&1 | logMsg "$@"
   		printf "#############################################################################\n"
   	done
   else
-     printf "Backup filesystem $mountpoint not mounted !!! Can't clean your backups !\n" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+     printf "Backup filesystem %s not mounted !!! Can't clean your backups !\n" "$mountpoint" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+     printf "Backup filesystem %s not mounted !!! Can't clean your backups !\n" "$mountpoint" | logMsg "$@"
      exit 1
   fi
   return 0
@@ -175,20 +197,27 @@ backupclean () {
 # Backup sizes function
 backupsizes () {
   printf "\nStart of scanning Backup sizes"
+  printf "\nStart of scanning Backup sizes" | logMsg "$@"
   printf "\nNumber of backup dirs = %s\n" "$noOfDirs"
+  printf "\nNumber of backup dirs = %s\n" "$noOfDirs" | logMsg "$@"
 
   if [ "$(/bin/mount | /bin/grep -c "$mountpoint")" = '1' ]
   then
   	for (( i = 0; i < "$noOfDirs"; i++ )); do
   		printf "\n"
+  		printf "\n" | logMsg "$@"
   		printf "##################### %s #####################################################\n" "${sourcedir[i]}"
+  		printf "##################### %s #####################################################\n" "${sourcedir[i]}" | logMsg "$@"
 
   		printf "Backup Directory Mounted, will scan backup size of %s \n" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
-      /usr/bin/rdiff-backup --list-increment-sizes "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+  		printf "Backup Directory Mounted, will scan backup size of %s \n" "${destdir[i]}" | logMsg "$@"
+      /usr/bin/rdiff-backup --list-increment-sizes "${destdir[i]}" 2>&1 | logMsg "$@"
   		printf "#############################################################################\n"
+  		printf "#############################################################################\n"  | logMsg "$@"
   	done
   else
-     printf "Backup filesystem $mountpoint not mounted !!! Can't scan your backup sizes !\n" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+     printf "Backup filesystem %s not mounted !!! Can't scan your backup sizes !\n" "$mountpoint" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+     printf "Backup filesystem %s not mounted !!! Can't scan your backup sizes !\n" "$mountpoint" | logMsg "$@"
      exit 1
   fi
   return 0
@@ -200,10 +229,12 @@ backupsizes () {
 # Here is where the main script starts
 # Above were the functions to be used
 clear
+printf "Start of new backup" | logMsg "$@"
 
 if [ "$(upower -i "$(upower -e | grep ACAD)" | grep --color=never -E online|xargs|cut -d' ' -f2|sed s/%//)" = 'no' ]
 then
    printf "We are running on battery, refusing the backup commands to save Power!!!" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+   printf "We are running on battery, refusing the backup commands to save Power!!!" | logMsg "$@"
    exit 1
 fi
 
@@ -310,7 +341,7 @@ until [[ "$choice" = "q" ]]; do
   MESSAGE : In case of options, one value is displayed as the default value.
   Do erase it to use other value.
 
-  myBackup v0.1
+  myBackup v1.9.1
 
   This script is documented in README.md file.
 
@@ -335,6 +366,7 @@ until [[ "$choice" = "q" ]]; do
   		# printf "%s" choice
       backupfunc
   		echo "All Backup Operations completed successfully."
+  		echo "All Backup Operations completed successfully." | logMsg "$@"
   		;;
   	s)
   		# printf "%s" "$choice"
@@ -360,6 +392,7 @@ until [[ "$choice" = "q" ]]; do
         read -rp "Type the string that you want to use for the clean opperation:  " cleantime
         backupclean "$cleantime"
         printf "All %s older backups were cleanded." "$cleantime"
+        printf "All %s older backups were cleanded." "$cleantime" | logMsg "$@"
   			;;
   	q)	;;
   	*) exit 1
@@ -367,8 +400,11 @@ until [[ "$choice" = "q" ]]; do
   esac  #statements
 done
 printf "\n"
+printf "\n" | logMsg "$@"
 printf "Job done!\n"
+printf "Job done!\n" | logMsg "$@"
 printf "Thanks for using myBackup. :-)\n"
+printf "Thanks for using myBackup. :-)\n" | logMsg "$@"
 # ############################################################################
 # set debugging off
   # set -xv
