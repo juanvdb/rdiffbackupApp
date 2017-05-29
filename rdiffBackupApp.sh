@@ -142,10 +142,12 @@ die() { echo "$*" >&2; exit 1; }
 # ============================================================================================
 # Backup Function
 backupfunc () {
-  printf "\nStart of rdiff-backup"
-  printf "\nStart of rdiff-backup" | logMsg "$@"
-  printf "\nNumber of sourcedirs = %s\n" "$noOfDirs"
-  printf "\nNumber of sourcedirs = %s\n" "$noOfDirs" | logMsg "$@"
+  printf "\n"
+  printf "\n" | logMsg
+  printf "Start of rdiff-backup\n"
+  printf "Start of rdiff-backup\n" | logMsg
+  printf "Number of sourcedirs = %s\n" "$noOfDirs"
+  printf "Number of sourcedirs = %s\n" "$noOfDirs" | logMsg
 
   if [ "$(/bin/mount | /bin/grep -c "$mountpoint")" = '1' ]
   then
