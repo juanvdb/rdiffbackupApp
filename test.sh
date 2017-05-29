@@ -24,7 +24,11 @@ LogMsg()
   echo $DateTime' ('$QMAKESPEC'): '$IN
 }
 
+<<<<<<< HEAD
 echo "This echo statement is piped to LogMsg" | LogMsg
 printf "This printf statement is piped to LogMsg" | LogMsg
+=======
+echo "This statement is piped to LogMsg" | LogMsg
+>>>>>>> testFile
 EchoErr "This statement is an error" 2>&1 | LogMsg
 LogMsg "This statement is sent to LogMsg"
