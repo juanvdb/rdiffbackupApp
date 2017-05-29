@@ -114,7 +114,16 @@ log_debug()     { log "$1" "DEBUG" "${LOG_DEBUG_COLOR}"; }
 # ############################################################################
 logMsg()
 {
-  echo -e "$1" | awk '// { print strftime("[%H:%M:%S] ") $0; }' >> "$msgLogFile"
+  local IN="$1"
+  if [ -z "$1" ]
+  then
+    # This reads a string from stdin and stores it in a variable called IN
+    read -r IN
+  fi
+
+  local DateTime="["$(date "+%Y/%m/%d %H:%M:%S")"]"
+  echo "$DateTime: $IN" >> "$msgLogFile"
+  # echo -e "$IN" | awk '// { print strftime("[%H:%M:%S] ") $0; }' >> "$msgLogFile"
 }
 
 # ############################################################################
