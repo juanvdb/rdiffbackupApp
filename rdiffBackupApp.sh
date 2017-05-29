@@ -12,6 +12,8 @@
 # sourcedir[3]="/data/SpiderOak Hive"
 # sourcedir[4]="$USER/SpiderOak Hive"
 
+msgLogFile="rdiffbackupMsg.log"
+
 mountpoint="/media/$USER/SeagateBackupPl"
 mountdir="$mountpoint/testbackup/rdiffbackup"
 
@@ -47,7 +49,6 @@ export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 INTERACTIVE_MODE="on"
 scriptDebugToStdout=1
 scriptDebugToFile=1
-msgLogFile="rdiffbackupMsg.log"
 
 if [[ $scriptDebugToFile == 1 ]]; then
   if [[ -e debug.log ]]; then
@@ -113,8 +114,7 @@ log_debug()     { log "$1" "DEBUG" "${LOG_DEBUG_COLOR}"; }
 # ############################################################################
 logMsg()
 {
-  DateTime="%Y/%m/%d %H:%M:%S"
-  echo -e "$DateTime: $1" >> "$msgLogFile"
+  echo -e "$1" | awk '// { print strftime("[%H:%M:%S] ") $0; }' >> "$msgLogFile"
 }
 
 # ############################################################################
@@ -229,7 +229,7 @@ backupsizes () {
 # Here is where the main script starts
 # Above were the functions to be used
 clear
-printf "Start of new backup" | logMsg "$@"
+echo "Start of new backup" | logMsg
 
 if [ "$(upower -i "$(upower -e | grep ACAD)" | grep --color=never -E online|xargs|cut -d' ' -f2|sed s/%//)" = 'no' ]
 then
