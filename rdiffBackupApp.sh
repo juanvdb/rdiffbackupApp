@@ -121,7 +121,9 @@ logMsg()
     read -r IN
   fi
 
-  local DateTime="["$(date "+%Y/%m/%d %H:%M:%S")"]"
+  # local DateTime="["$(date "+%Y/%m/%d %H:%M:%S")"]"
+  local DateTime
+  DateTime="[$(date +%Y/%m/%d %H:%M:%S)]"
   echo "$DateTime: $IN" >> "$msgLogFile"
   # echo -e "$IN" | awk '// { print strftime("[%H:%M:%S] ") $0; }' >> "$msgLogFile"
 }
@@ -143,11 +145,13 @@ die() { echo "$*" >&2; exit 1; }
 # Backup Function
 backupfunc () {
   printf "\n"
-  printf "\n" | logMsg
+  printf "\n" | logMsg "$@"
   printf "Start of rdiff-backup\n"
-  printf "Start of rdiff-backup\n" | logMsg
+  printf "Start of rdiff-backup\n" | logMsg "$@"
+  printf "\n"
+  printf "\n" | logMsg "$@"
   printf "Number of sourcedirs = %s\n" "$noOfDirs"
-  printf "Number of sourcedirs = %s\n" "$noOfDirs" | logMsg
+  printf "Number of sourcedirs = %s\n" "$noOfDirs" | logMsg "$@"
 
   if [ "$(/bin/mount | /bin/grep -c "$mountpoint")" = '1' ]
   then
@@ -177,10 +181,14 @@ backupfunc () {
 # ============================================================================================
 # Clean Backups function
 backupclean () {
-  printf "\nStart of Clean Backups"
-  printf "\nStart of Clean Backups" | logMsg "$@"
-  printf "\nNumber of backup dirs = %s\n" "$noOfDirs"
-  printf "\nNumber of backup dirs = %s\n" "$noOfDirs"  | logMsg "$@"
+  printf "\n"
+  printf "\n" | logMsg "$@"
+  printf "Start of Clean Backups\n"
+  printf "Start of Clean Backups\n" | logMsg "$@"
+  printf "\n"
+  printf "\n" | logMsg "$@"
+  printf "Number of backup dirs = %s\n" "$noOfDirs"
+  printf "Number of backup dirs = %s\n" "$noOfDirs"  | logMsg "$@"
 
   log_debug "Cleamtime = $1"
   if [[ "$(/bin/mount | /bin/grep -c "$mountpoint")" = '1' ]]
@@ -207,10 +215,14 @@ backupclean () {
 # ============================================================================================
 # Backup sizes function
 backupsizes () {
-  printf "\nStart of scanning Backup sizes"
-  printf "\nStart of scanning Backup sizes" | logMsg "$@"
-  printf "\nNumber of backup dirs = %s\n" "$noOfDirs"
-  printf "\nNumber of backup dirs = %s\n" "$noOfDirs" | logMsg "$@"
+  printf "\n"
+  printf "\n" | logMsg "$@"
+  printf "Start of scanning Backup sizes\n"
+  printf "Start of scanning Backup sizes\n" | logMsg "$@"
+  printf "\n"
+  printf "\n" | logMsg "$@"
+  printf "Number of backup dirs = %s\n" "$noOfDirs"
+  printf "Number of backup dirs = %s\n" "$noOfDirs" | logMsg "$@"
 
   if [ "$(/bin/mount | /bin/grep -c "$mountpoint")" = '1' ]
   then
@@ -240,7 +252,7 @@ backupsizes () {
 # Here is where the main script starts
 # Above were the functions to be used
 clear
-echo "Start of new backup" | logMsg
+echo "Start of new backup" | logMsg "$@"
 
 if [ "$(upower -i "$(upower -e | grep ACAD)" | grep --color=never -E online|xargs|cut -d' ' -f2|sed s/%//)" = 'no' ]
 then
@@ -375,13 +387,13 @@ until [[ "$choice" = "q" ]]; do
   case "$choice" in
   	b)
   		# printf "%s" choice
-      backupfunc
+      backupfunc "$@"
   		echo "All Backup Operations completed successfully."
   		echo "All Backup Operations completed successfully." | logMsg "$@"
   		;;
   	s)
   		# printf "%s" "$choice"
-      backupsizes
+      backupsizes "$@"
   		;;
   	c)	printf "\n"
   			printf "What time unit do you want to use? Options are:\n"
