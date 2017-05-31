@@ -110,7 +110,43 @@ log_error()     { log "$1" "ERROR" "${LOG_ERROR_COLOR}"; }
 log_warning()   { log "$1" "WARNING" "${LOG_WARN_COLOR}"; }
 log_debug()     { log "$1" "DEBUG" "${LOG_DEBUG_COLOR}"; }
 # ############################################################################
+# Print the newest file, if any, matching the given pattern
+# Example usage:
+#   newest_matching_file 'b2*'
+# WARNING: Files whose names begin with a dot will not be checked
+function newest_matching_file
+{
+    # Use ${1-} instead of $1 in case 'nounset' is set
+    local -r glob_pattern=${1-}
 
+    if (( $# != 1 )) ; then
+        echo 'usage: newest_matching_file GLOB_PATTERN' >&2
+        return 1
+    fi
+
+    # To avoid printing garbage if no files match the pattern, set
+    # 'nullglob' if necessary
+    local -i need_to_unset_nullglob=0
+    if [[ ":$BASHOPTS:" != *:nullglob:* ]] ; then
+        shopt -s nullglob
+        need_to_unset_nullglob=1
+    fi
+
+    newest_file=
+    for file in $glob_pattern ; do
+        [[ -z $newest_file || $file -nt $newest_file ]] \
+            && newest_file=$file
+    done
+
+    # To avoid unexpected behaviour elsewhere, unset nullglob if it was
+    # set by this function
+    (( need_to_unset_nullglob )) && shopt -u nullglob
+
+    # Use printf instead of echo in case the file name begins with '-'
+    [[ -n $newest_file ]] && printf '%s\n' "$newest_file"
+
+    return 0
+}
 # ############################################################################
 #--------------------------------------------------------------------------------------------------
 # ###################################################################3########
@@ -139,12 +175,15 @@ backupfunc () {
       # log_debug "dest = ${destdir[i]}"
 
   		printf "Backup Directory Mounted, busy doing a backup of %s to %s\n" "${sourcedir[i]}" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
-           /usr/bin/rdiff-backup -v5 --terminal-verbosity 4 --exclude=**/*tmp*/ --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/lost+found*/ --exclude=**/*Trash*/ --exclude=**/*trash*/ --exclude=**/.gvfs/ "${sourcedir[i]}" "${destdir[i]}" 2>&1 | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+           /usr/bin/rdiff-backup -v5 --terminal-verbosity 3 --exclude=**/*tmp*/ --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/lost+found*/ --exclude=**/*Trash*/ --exclude=**/*trash*/ --exclude=**/.gvfs/ "${sourcedir[i]}" "${destdir[i]}" 2>&1 | awk '// { print strftime("[%H:%M:%S] ") $0; }'
       printf "Backup of %s to %s completed.\n" "${sourcedir[i]}" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
-  		printf "#############################################################################\n"
+      printf "\n"
+      backuplogfile=$(newest_matching_file "${destdir[i]}/rdiff-backup-data/session*.data")
+      cat "$backuplogfile"
+      printf "#############################################################################\n"
   	done
   else
-     printf "Backup filesystem $mountpoint not mounted !!! Cowardly refusing your backup !\n" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+     printf "Backup filesystem %s not mounted !!! Cowardly refusing your backup !\n" "$mountpoint" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
      exit 1
   fi
   return 0
@@ -168,7 +207,7 @@ backupclean () {
   		printf "#############################################################################\n"
   	done
   else
-     printf "Backup filesystem $mountpoint not mounted !!! Can't clean your backups !\n" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+     printf "Backup filesystem %s not mounted !!! Can't clean your backups !\n" "$mountpoint" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
      exit 1
   fi
   return 0
@@ -191,7 +230,7 @@ backupsizes () {
   		printf "#############################################################################\n"
   	done
   else
-     printf "Backup filesystem $mountpoint not mounted !!! Can't scan your backup sizes !\n" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+     printf "Backup filesystem %s not mounted !!! Can't scan your backup sizes !\n" "$mountpoint" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
      exit 1
   fi
   return 0
