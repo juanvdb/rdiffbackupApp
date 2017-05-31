@@ -153,9 +153,10 @@ backupfunc () {
   printf "Number of sourcedirs = %s\n" "$noOfDirs"
   printf "Number of sourcedirs = %s\n" "$noOfDirs" | logMsg
 
-  if [ "$(/bin/mount | /bin/grep -c "$mountpoint")" = '1' ]
+  if [ "$(/bin/mount | /bin/grep -c "$mountpoint")" -gt 0 ]
   then
   	for (( i = 0; i < "$noOfDirs"; i++ )); do
+      cat /dev/null > "rdverbose_${targetdir[i]}.log"
   	  printf "\n"
   	  printf "\n" | logMsg
   		printf "##################### %s #####################################################\n" "${sourcedir[i]}"
@@ -164,7 +165,8 @@ backupfunc () {
 
   		printf "Backup Directory Mounted, busy doing a backup of %s to %s\n" "${sourcedir[i]}" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
   		printf "Backup Directory Mounted, busy doing a backup of %s to %s\n" "${sourcedir[i]}" "${destdir[i]}" | logMsg
-           /usr/bin/rdiff-backup -v5 --print-statistics --exclude=**/*tmp*/ --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/lost+found*/ --exclude=**/*Trash*/ --exclude=**/*trash*/ --exclude=**/.gvfs/ "${sourcedir[i]}" "${destdir[i]}" | logMsg
+           /usr/bin/rdiff-backup -v5 --terminal-verbosity 4 --print-statistics --exclude=**/*tmp*/ --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/lost+found*/ --exclude=**/*Trash*/ --exclude=**/*trash*/ --exclude=**/.gvfs/ "${sourcedir[i]}" "${destdir[i]}"
+       cat "${destdir[i]}/rdiff-backup-data/session_statistics*.data"
       printf "Backup of %s to %s completed.\n" "${sourcedir[i]}" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
       printf "Backup of %s to %s completed.\n" "${sourcedir[i]}" "${destdir[i]}" | logMsg
   		printf "#############################################################################\n"

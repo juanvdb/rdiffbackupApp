@@ -1,0 +1,41 @@
+[1m[2017-05-31 10:56:48 SAST] [INFO] inputFile = test_to_data.txt [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is coming from the file: # Autobackup file [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is coming from the file: # Target mount path [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is coming from the file: /data [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is placed in backupFile 0 = /data [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is coming from the file: # Target backup path on mount [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is coming from the file: /Backups/test [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is placed in backupFile 1 = /Backups/test [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is coming from the file: # List of directories to backup sourcedir@targetdir [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is coming from the file: /data/GoogleDrive [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is placed in backupFile 2 = /data/GoogleDrive [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is coming from the file: /home/juan/SpiderOak Hive [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is placed in backupFile 3 = /home/juan/SpiderOak Hive [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] This is what is coming from the file: #/data/Dropbox [0m
+[1m[2017-05-31 10:56:48 SAST] [INFO] 
+ [0m
+[1m[2017-05-31 10:56:48 SAST] [INFO] mountpoint = /data [0m
+[1m[2017-05-31 10:56:48 SAST] [INFO] mountdir = /data/Backups/test [0m
+[1m[2017-05-31 10:56:48 SAST] [INFO] Number of directories = 2 [0m
+[1m[2017-05-31 10:56:48 SAST] [INFO] 
+ [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] sourcedir 0 = /data/GoogleDrive [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] targetdir 0 =  [0m
+[1;31m[2017-05-31 10:56:48 SAST] [ERROR] targetdir 0 is empty [0m
+[1m[2017-05-31 10:56:48 SAST] [INFO] List of backup dirs... [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] sourcedir 0 = /data/GoogleDrive [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] targetdir 0 = data_GoogleDrive [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] destdir 0 = /data/Backups/test/data_GoogleDrive [0m
+[1m[2017-05-31 10:56:48 SAST] [INFO] Done with backup set.
+ [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] sourcedir 1 = /home/juan/SpiderOak Hive [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] targetdir 1 =  [0m
+[1;31m[2017-05-31 10:56:48 SAST] [ERROR] targetdir 1 is empty [0m
+[1m[2017-05-31 10:56:48 SAST] [INFO] List of backup dirs... [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] sourcedir 1 = /home/juan/SpiderOak Hive [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] targetdir 1 = home_juan_SpiderOak_Hive [0m
+[1;34m[2017-05-31 10:56:48 SAST] [DEBUG] destdir 1 = /data/Backups/test/home_juan_SpiderOak_Hive [0m
+[1m[2017-05-31 10:56:48 SAST] [INFO] Done with backup set.
+ [0m
+[1;34m[2017-05-31 10:56:50 SAST] [DEBUG] dest = /data/Backups/test/data_GoogleDrive [0m
+[1;34m[2017-05-31 10:57:36 SAST] [DEBUG] dest = /data/Backups/test/home_juan_SpiderOak_Hive [0m

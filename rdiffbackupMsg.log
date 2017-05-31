@@ -1,0 +1,19 @@
+[2017/05/31 10:56:48]: Start of new backup
+[2017/05/31 10:56:50]: 
+[2017/05/31 10:56:50]: Start of rdiff-backup
+[2017/05/31 10:56:50]: 
+[2017/05/31 10:56:50]: Number of sourcedirs = 2
+[2017/05/31 10:56:50]: 
+[2017/05/31 10:56:50]: ##################### /data/GoogleDrive #####################################################
+[2017/05/31 10:56:50]: Backup Directory Mounted, busy doing a backup of /data/GoogleDrive to /data/Backups/test/data_GoogleDrive
+[2017/05/31 10:57:36]: Backup of /data/GoogleDrive to /data/Backups/test/data_GoogleDrive completed.
+[2017/05/31 10:57:36]: #############################################################################
+[2017/05/31 10:57:36]: 
+[2017/05/31 10:57:36]: ##################### /home/juan/SpiderOak Hive #####################################################
+[2017/05/31 10:57:36]: Backup Directory Mounted, busy doing a backup of /home/juan/SpiderOak Hive to /data/Backups/test/home_juan_SpiderOak_Hive
+[2017/05/31 10:57:44]: Backup of /home/juan/SpiderOak Hive to /data/Backups/test/home_juan_SpiderOak_Hive completed.
+[2017/05/31 10:57:44]: #############################################################################
+[2017/05/31 10:57:44]: All Backup Operations completed successfully.
+[2017/05/31 11:06:18]: 
+[2017/05/31 11:06:18]: Job done!
+[2017/05/31 11:06:18]: Thanks for using myBackup. :-)
