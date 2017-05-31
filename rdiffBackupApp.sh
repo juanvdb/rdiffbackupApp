@@ -165,8 +165,9 @@ backupfunc () {
 
   		printf "Backup Directory Mounted, busy doing a backup of %s to %s\n" "${sourcedir[i]}" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
   		printf "Backup Directory Mounted, busy doing a backup of %s to %s\n" "${sourcedir[i]}" "${destdir[i]}" | logMsg
-           /usr/bin/rdiff-backup -v5 --terminal-verbosity 4 --print-statistics --exclude=**/*tmp*/ --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/lost+found*/ --exclude=**/*Trash*/ --exclude=**/*trash*/ --exclude=**/.gvfs/ "${sourcedir[i]}" "${destdir[i]}"
-       cat "${destdir[i]}/rdiff-backup-data/session_statistics*.data"
+          #  /usr/bin/rdiff-backup -v5 --terminal-verbosity 3 --print-statistics --exclude=**/*tmp*/ --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/lost+found*/ --exclude=**/*Trash*/ --exclude=**/*trash*/ --exclude=**/.gvfs/ "${sourcedir[i]}" "${destdir[i]}"
+           /usr/bin/rdiff-backup -v5 --terminal-verbosity 3 --exclude=**/*tmp*/ --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/lost+found*/ --exclude=**/*Trash*/ --exclude=**/*trash*/ --exclude=**/.gvfs/ "${sourcedir[i]}" "${destdir[i]}"
+      #  cat "${destdir[i]}/rdiff-backup-data/session_statistics*.data"
       printf "Backup of %s to %s completed.\n" "${sourcedir[i]}" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
       printf "Backup of %s to %s completed.\n" "${sourcedir[i]}" "${destdir[i]}" | logMsg
   		printf "#############################################################################\n"
