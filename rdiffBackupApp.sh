@@ -178,7 +178,15 @@ backupfunc () {
 
   		printf "Backup Directory Mounted, busy doing a backup of %s to %s\n" "${sourcedir[i]}" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
           #  /usr/bin/rdiff-backup -v5 --terminal-verbosity 3 --exclude=**/*tmp*/ --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/lost+found*/ --exclude=**/*Trash*/ --exclude=**/*trash*/ --exclude=**/.gvfs/ "${sourcedir[i]}" "${destdir[i]}" 2>&1 | awk '// { print strftime("[%H:%M:%S] ") $0; }'
-           /usr/bin/rdiff-backup -v5 --terminal-verbosity 3 --exclude ignorecase:'**/*tmp*/' --exclude ignorecase:'**/*cache*/' --exclude '**~' --exclude '**/lost+found*/' --exclude ignorecase:'**/*trash*/' --exclude '**/.gvfs/' --exclude-symbolic-links  "${sourcedir[i]}" "${destdir[i]}" 2>&1 | awk '// { print strftime("[%H:%M:%S] ") $0; }'
+           /usr/bin/rdiff-backup -v5 --terminal-verbosity 3   \
+           --exclude ignorecase:'**/*tmp*/'                   \
+           --exclude ignorecase:'**/*cache*/'                 \
+           --exclude '**~'                                    \
+           --exclude '**/lost+found*/'                        \
+           --exclude ignorecase:'**/*trash*/'                 \
+           --exclude '**/.gvfs/'                              \
+           --exclude-symbolic-links                           \
+           "${sourcedir[i]}" "${destdir[i]}" 2>&1 | awk '// { print strftime("[%H:%M:%S] ") $0; }'
       printf "Backup of %s to %s completed.\n" "${sourcedir[i]}" "${destdir[i]}" | awk '// { print strftime("[%H:%M:%S] ") $0; }'
       printf "\n"
       backuplogfile=$(newest_matching_file "${destdir[i]}/rdiff-backup-data/session*.data")
